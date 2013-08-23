@@ -1,0 +1,1 @@
+mvn install:install-file -Dpackaging=jar -DgroupId=com.hazelcast -DartifactId=hazelcast-client -Dversion=3.0 -Dfile=hazelcast-client-3.0.jar

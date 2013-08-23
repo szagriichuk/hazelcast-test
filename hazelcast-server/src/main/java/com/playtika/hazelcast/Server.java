@@ -3,46 +3,31 @@ package com.playtika.hazelcast;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.playtika.hazelcast.task.ReadTask;
+import com.playtika.hazelcast.task.TestingTask;
+import com.playtika.hazelcast.task.WritingTask;
 
 /**
  * @author szagriichuk
  */
 public class Server {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
-
     public static void main(String[] args) {
         Server server = new Server();
         PlaytikaProperties playtikaProperties = server.readProperties("server.properties");
         Config config = server.createConfig(playtikaProperties);
         HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-        writeToMap("test", hazelcastInstance, playtikaProperties);
-        readFromMap("test", hazelcastInstance, playtikaProperties);
+        server.writeToMap("test", hazelcastInstance, playtikaProperties);
+        server.readFromMap("test", hazelcastInstance, playtikaProperties);
     }
 
-    private static void readFromMap(String mapId, HazelcastInstance hazelcastInstance, PlaytikaProperties playtikaProperties) {
-        LOGGER.info("Start reading from Map");
-        IMap<Integer, String> stringMap = hazelcastInstance.getMap(mapId);
-        int loopCount = Integer.parseInt(playtikaProperties.get("loop.count"));
-        long startTime = System.nanoTime();
-        for (int i = 0; i < loopCount; i++) {
-            stringMap.get(i);
-        }
-        System.out.println("Reading time is " + (System.nanoTime() - startTime) / 1000000000 + " sec.");
+    private void readFromMap(String mapId, HazelcastInstance hazelcastInstance, PlaytikaProperties playtikaProperties) {
+        TestingTask testingTask = new ReadTask();
+        testingTask.executeTask(mapId, hazelcastInstance, playtikaProperties);
     }
 
-    private static void writeToMap(String mapId, HazelcastInstance hazelcastInstance, PlaytikaProperties playtikaProperties) {
-        LOGGER.info("Start writing to Map");
-        IMap<Integer, String> stringMap = hazelcastInstance.getMap(mapId);
-        int loopCount = Integer.parseInt(playtikaProperties.get("loop.count"));
-        String text = playtikaProperties.get("text");
-        long startTime = System.nanoTime();
-        for (int i = 0; i < loopCount; i++) {
-            stringMap.put(i, text + i);
-        }
-        System.out.println("Writing time is " + (System.nanoTime() - startTime) / 1000000000 + " sec.");
+    private void writeToMap(String mapId, HazelcastInstance hazelcastInstance, PlaytikaProperties playtikaProperties) {
+        TestingTask testingTask = new WritingTask();
+        testingTask.executeTask(mapId, hazelcastInstance, playtikaProperties);
     }
 
     private PlaytikaProperties readProperties(String fileName) {

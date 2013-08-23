@@ -22,6 +22,10 @@ public class PlaytikaProperties {
         return properties.getProperty(key);
     }
 
+    public void put(String key, String value) {
+        properties.put(key, value);
+    }
+
     private Properties loadProperties(String name) {
         Properties properties = new Properties();
         try {
