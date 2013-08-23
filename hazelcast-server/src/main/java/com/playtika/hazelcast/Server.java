@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
+
     public static void main(String[] args) {
         Server server = new Server();
         PlaytikaProperties playtikaProperties = server.readProperties("server.properties");
@@ -29,7 +30,7 @@ public class Server {
         for (int i = 0; i < loopCount; i++) {
             stringMap.get(i);
         }
-        System.out.println("Reading time is " + (System.nanoTime() - startTime)/1000000 + " msec.");
+        System.out.println("Reading time is " + (System.nanoTime() - startTime) / 1000000000 + " sec.");
     }
 
     private static void writeToMap(String mapId, HazelcastInstance hazelcastInstance, PlaytikaProperties playtikaProperties) {
@@ -41,7 +42,7 @@ public class Server {
         for (int i = 0; i < loopCount; i++) {
             stringMap.put(i, text + i);
         }
-        System.out.println("Writing time is " + (System.nanoTime() - startTime) /1000000 + " msec.");
+        System.out.println("Writing time is " + (System.nanoTime() - startTime) / 1000000000 + " sec.");
     }
 
     private PlaytikaProperties readProperties(String fileName) {
